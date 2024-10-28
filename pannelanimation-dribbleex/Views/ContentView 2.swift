@@ -61,7 +61,7 @@ struct ContentView2: View {
                 Spacer()
                 
                 HStack {
-                    CalendarComponent()
+                    CalendarComponent(namespace: namespace)
                         .foregroundColor(.black)
                         .frame(width: 300, height: 350)
                         .background(Color(hex: "#b1c3b6"))
@@ -86,7 +86,7 @@ struct ContentView2: View {
     var body2: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                CalendarComponent(isFullPage: true)
+                CalendarComponent(isFullPage: true, namespace: namespace)
                     .frame(height: 470)
                     .matchedGeometryEffect(id: "calendar", in: namespace)
                 

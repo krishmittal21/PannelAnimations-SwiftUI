@@ -27,34 +27,62 @@ struct ContentView: View {
     var body1: some View {
         NavigationView {
             VStack(alignment: .leading) {
-                // Title section at top
-                VStack(alignment: .leading) {
-                    Text("")
-                    Text("")
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Product")
+                        Text("Statistics")
+                    }
+                    .font(.title)
+                    .bold()
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.down")
+                        .font(.headline)
+                        .bold()
+                        .matchedGeometryEffect(id: "chevron", in: namespace)
                 }
-                .font(.title)
-                .bold()
-                .padding(.top)
+                .padding(.top,5)
                 .padding(.horizontal)
                 
                 Spacer()
                 
-                HStack {
-                    CalendarComponent()
-                        .foregroundColor(.black)
-                        .frame(width: 300, height: 350)
-                        .background(Color(hex: "#b1c3b6"))
-                        .cornerRadius(16)
-                        .padding()
-                        .onTapGesture {
-                            withAnimation(.bouncy) {
-                                show.toggle()
+                CircularProgressView(percentage: 55, label: "Mobile")
+                    .frame(maxWidth: .infinity)
+                
+                Spacer()
+                
+                GeometryReader { geometry in
+                    HStack(spacing: 0) {
+                        CalendarComponent(namespace: namespace)
+                            .foregroundColor(.black)
+                            .frame(width: geometry.size.width * 0.6, height: 350)
+                            .background(Color(hex: "#b1c3b6"))
+                            .cornerRadius(16)
+                            .padding()
+                            .onTapGesture {
+                                withAnimation(.bouncy) {
+                                    show.toggle()
+                                }
                             }
+                            .matchedGeometryEffect(id: "calendar", in: namespace)
+                        
+                        VStack(spacing: 16) {
+                            Spacer()
+                            PercentageBoxView(percentage: 45)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: geometry.size.height * 0.55)
+                            
+                            AddButtonView()
+                                .frame(maxWidth: .infinity)
+                                .frame(height: geometry.size.height * 0.35)
                         }
-                        .matchedGeometryEffect(id: "calendar", in: namespace)
-                    Spacer()
+                        .frame(width: geometry.size.width * 0.3)
+                        .padding(.trailing)
+                    }
+                    .padding(.bottom, 10)
                 }
-                .padding(.bottom, 10)
+                .frame(height: 350)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.gray.opacity(0.1))
@@ -65,13 +93,12 @@ struct ContentView: View {
     var body2: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                CalendarComponent(isFullPage: true)
+                CalendarComponent(isFullPage: true, namespace: namespace)
                     .frame(height: 470)
                     .matchedGeometryEffect(id: "calendar", in: namespace)
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        // Using CostCardView to animate each card individually
                         CostCardView(icon: "tiktok", platform: "TikTok", amount: 12, delay: 0.1, geometryWidth: geometry.size.width)
                         CostCardView(icon: "github", platform: "Github", amount: 24, delay: 0.2, geometryWidth: geometry.size.width)
                         CostCardView(icon: "dropbox", platform: "Dropbox", amount: 15, delay: 0.3, geometryWidth: geometry.size.width)
@@ -90,19 +117,19 @@ struct ContentView: View {
                         .fontWeight(.semibold)
                 }
                 .padding(.vertical, 20)
-                .offset(y: showAllTime ? 0 : 20)  // Start offset down slightly, then animate to zero
-                .opacity(showAllTime ? 1 : 0)      // Fade in as it becomes visible
+                .offset(y: showAllTime ? 0 : 20)
+                .opacity(showAllTime ? 1 : 0)
                 .animation(.easeOut(duration: 0.4).delay(0.3), value: showAllTime)
             }
-            .padding([.top, .leading, .trailing], 10)
+            .padding([.leading, .trailing], 10)
             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
             .background(Color(hex: "#b1c3b6"))
             .onAppear {
-                showAllTime = true  // Trigger animation on appear
+                showAllTime = true
             }
             .onTapGesture {
                 show.toggle()
-                showAllTime = false  // Reset on toggle
+                showAllTime = false 
             }
         }
     }
