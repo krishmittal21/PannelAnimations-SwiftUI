@@ -8,56 +8,14 @@
 import SwiftUI
 
 struct CostsDashboardView: View {
-    let costs: [Double] = [0.3, 0.6, 0.2, 0.4, 0.8]
-    let days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
     
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 // Header
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Popular")
-                                .font(.system(size: 32, weight: .bold))
-                            Text("Costs")
-                                .font(.system(size: 32, weight: .bold))
-                        }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "arrow.down")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .padding(.top, 40)
-                    
-                    Spacer()
-                    
-                    HStack(alignment: .bottom, spacing: 12) {
-                        ForEach(0..<5) { index in
-                            VStack(spacing: 8) {
-                                Spacer()
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(index == 1 ? Color.black : Color.clear)
-                                    .frame(height: CGFloat(costs[index]) * 250)
-                                    .overlay(
-                                        Group {
-                                            if index != 1 {
-                                                DiagonalStripes()
-                                                    .stroke(Color.black.opacity(0.2), lineWidth: 1.5)
-                                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                                            }
-                                        }
-                                    )
-                                
-                                Text(days[index])
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                    }
-                    .frame(height: 370)
-                    .padding(.bottom, 20)
+                CalendarComponent()
+                    .padding(.top, 30)
+                    .frame(height: 530)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
@@ -100,7 +58,7 @@ struct CostsDashboardView: View {
             .ignoresSafeArea()
             .background(Color(hex: "#b1c3b6"))
         }
-    }
+    
 }
 
 struct CostCard: View {
@@ -129,6 +87,26 @@ struct CostCard: View {
         .frame(width: 160, alignment: .leading) // Align the card content to the left
         .background(Color.gray.opacity(0.2))
         .cornerRadius(16)
+    }
+}
+
+struct CostCardView: View {
+    let icon: String
+    let platform: String
+    let amount: Double
+    let delay: Double
+    let geometryWidth: CGFloat
+
+    @State private var isVisible = false
+
+    var body: some View {
+        CostCard(icon: icon, platform: platform, amount: amount)
+            .offset(x: isVisible ? 0 : geometryWidth) // Start off-screen to the right
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.6).delay(delay)) {
+                    isVisible = true // Animate to original position
+                }
+            }
     }
 }
 

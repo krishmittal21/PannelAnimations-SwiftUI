@@ -1,4 +1,12 @@
 //
+//  ContentView 2.swift
+//  pannelanimation-dribbleex
+//
+//  Created by Krish Mittal on 28/10/24.
+//
+
+
+//
 //  ContentView.swift
 //  pannelanimation-dribbleex
 //
@@ -7,21 +15,34 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct ContentView2: View {
     @Namespace var namespace
     @State var show = false
-    @State var showAllTime = false
+    @State var backgroundColor: Color = Color.gray.opacity(0.1)
     
     var body: some View {
-        ZStack {
-            if !show {
-                body1
-            } else {
-                body2
+            ZStack {
+                backgroundColor
+                   .ignoresSafeArea()
+                   .animation(.linear, value: show)
+                
+                if !show {
+                    body1
+                       .transition(.scale.combined(with:.opacity))
+                } else {
+                    body2
+                       .transition(.scale.combined(with:.opacity))
+                }
+            }
+           .onChange(of: show) { newValue in
+                withAnimation(.linear) {
+                    backgroundColor = newValue ? Color(hex: "#b1c3b6") : Color.gray.opacity(0.1)
+                }
+                withAnimation(.bouncy) {
+                    // No need to toggle here, handled by onChange
+                }
             }
         }
-        .animation(.bouncy, value: show)
-    }
     
     @ViewBuilder
     var body1: some View {
@@ -47,7 +68,7 @@ struct ContentView: View {
                         .cornerRadius(16)
                         .padding()
                         .onTapGesture {
-                            withAnimation(.bouncy) {
+                            withAnimation(.linear) {
                                 show.toggle()
                             }
                         }
@@ -71,10 +92,9 @@ struct ContentView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        // Using CostCardView to animate each card individually
-                        CostCardView(icon: "tiktok", platform: "TikTok", amount: 12, delay: 0.1, geometryWidth: geometry.size.width)
-                        CostCardView(icon: "github", platform: "Github", amount: 24, delay: 0.2, geometryWidth: geometry.size.width)
-                        CostCardView(icon: "dropbox", platform: "Dropbox", amount: 15, delay: 0.3, geometryWidth: geometry.size.width)
+                        CostCard(icon: "tiktok", platform: "TikTok", amount: 12)
+                        CostCard(icon: "github", platform: "Github", amount: 24)
+                        CostCard(icon: "dropbox", platform: "Dropbox", amount: 15)
                     }
                 }
                 
@@ -89,20 +109,13 @@ struct ContentView: View {
                         .font(.system(size: 30))
                         .fontWeight(.semibold)
                 }
-                .padding(.vertical, 20)
-                .offset(y: showAllTime ? 0 : 20)  // Start offset down slightly, then animate to zero
-                .opacity(showAllTime ? 1 : 0)      // Fade in as it becomes visible
-                .animation(.easeOut(duration: 0.4).delay(0.3), value: showAllTime)
+                .padding(.top, 20)
             }
             .padding([.top, .leading, .trailing], 10)
             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
             .background(Color(hex: "#b1c3b6"))
-            .onAppear {
-                showAllTime = true  // Trigger animation on appear
-            }
             .onTapGesture {
                 show.toggle()
-                showAllTime = false  // Reset on toggle
             }
         }
     }

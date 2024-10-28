@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CalendarComponent: View {
-    let costs: [Double] = [0.3, 0.8, 0.2, 0.4, 0.6]
+    let costs: [Double] = [0.3, 0.6, 0.2, 0.4, 0.8]
     let days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    var isFullPage: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -23,6 +24,8 @@ struct CalendarComponent: View {
                     .fontWeight(.bold)
             }
             
+            Spacer()
+            
             // Bar Chart
             HStack(alignment: .bottom, spacing: 12) {
                 ForEach(0..<5) { index in
@@ -30,7 +33,7 @@ struct CalendarComponent: View {
                         // Bar
                         RoundedRectangle(cornerRadius: 12)
                             .fill(index == 1 ? Color.black : Color.clear)
-                            .frame(height: CGFloat(costs[index]) * 150)
+                            .frame(height: CGFloat(costs[index]) * (isFullPage == false ? 150 : 250))
                             .overlay(
                                 Group {
                                     if index != 1 {
@@ -48,9 +51,8 @@ struct CalendarComponent: View {
                     }
                 }
             }
-            .frame(height: 180)
+            .frame(height: (isFullPage == false ? 180 : 230))
         }
-        .padding(24)
         .background(Color(hex: "#b1c3b6"))
         .cornerRadius(16)
         .padding()
